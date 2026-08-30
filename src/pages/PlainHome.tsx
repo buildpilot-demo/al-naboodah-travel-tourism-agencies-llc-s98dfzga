@@ -12,28 +12,40 @@ import type { PlainSiteConfig } from "../types/site-config";
 // rendered by App.tsx when siteConfig.variant === "plain".
 export function PlainHome({ config }: { config: PlainSiteConfig }) {
   useEffect(() => {
-    document.title = siteConfig.businessName;
+    document.title = `${siteConfig.businessName} — ${siteConfig.purpose}`;
   }, []);
 
-  const { hero, highlightsSection } = config;
+  const { hero, highlightsSection, purpose } = config;
 
   return (
     <div id="top">
-      <section className="plain-hero">
-        <p className="eyebrow">{hero.eyebrow}</p>
-        <h1>{hero.heading}</h1>
-        <p className="muted">{hero.body}</p>
-        {hero.primaryCta && <a className="btn" href={hero.primaryCta.href}>{hero.primaryCta.label}</a>}
-        {hero.secondaryCta && <a className="btn btn-secondary" href={hero.secondaryCta.href}>{hero.secondaryCta.label}</a>}
+      <section className="plain-hero" aria-labelledby="hero-heading">
+        <div className="plain-hero__inner">
+          <p className="eyebrow">{hero.eyebrow}</p>
+          <h1 id="hero-heading">{hero.heading}</h1>
+          <p className="plain-hero__body">{hero.body}</p>
+          {(hero.primaryCta || hero.secondaryCta) && (
+            <div className="cta-row">
+              {hero.primaryCta && <a className="btn" href={hero.primaryCta.href}>{hero.primaryCta.label}</a>}
+              {hero.secondaryCta && <a className="btn btn-secondary" href={hero.secondaryCta.href}>{hero.secondaryCta.label}</a>}
+            </div>
+          )}
+          <p className="plain-hero__purpose muted">{purpose}</p>
+        </div>
       </section>
 
-      <section id={highlightsSection.id} className="plain-highlights">
-        <p className="eyebrow">{highlightsSection.eyebrow}</p>
-        <h2>{highlightsSection.heading}</h2>
-        <p className="muted">{highlightsSection.body}</p>
+      <section id={highlightsSection.id} className="plain-highlights" aria-labelledby="highlights-heading">
+        <div className="section-head">
+          <p className="eyebrow">{highlightsSection.eyebrow}</p>
+          <h2 id="highlights-heading">{highlightsSection.heading}</h2>
+          <p className="muted">{highlightsSection.body}</p>
+        </div>
         <ul className="plain-highlights__list">
-          {highlightsSection.items.map((item) => (
+          {highlightsSection.items.map((item, index) => (
             <li key={item.name}>
+              <span className="plain-highlights__index" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
               <h3>{item.name}</h3>
               <p className="muted">{item.description}</p>
             </li>
